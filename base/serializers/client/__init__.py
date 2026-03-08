@@ -1,6 +1,6 @@
 from .authSerializers import (
-    RequestOTPSerializer, VerifyOTPSerializer,
-    RegisterSerializer, RegisterAndRequestOTPSerializer,
+    LoginSerializer, ResendOTPSerializer, VerifyOTPSerializer,
+    RegisterSerializer,
 )
 from .profileSerializers import ProfileSerializer, UpdateProfileSerializer
 from .complaintSerializers import (
@@ -8,3 +8,4 @@ from .complaintSerializers import (
     ComplaintDetailSerializer, ComplaintMediaSerializer,
 )
 from .newsSerializers import NewsListSerializer, NewsDetailSerializer
+from .categorySerializers import CategorySerializer

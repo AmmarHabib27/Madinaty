@@ -1,16 +1,25 @@
 from rest_framework.permissions import BasePermission
-from base.models import UserRole
 
 
 class IsAdminUser(BasePermission):
     message = 'Admin access required.'
 
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and request.user.role == UserRole.ADMIN)
+        from base.models import Admin
+        return bool(
+            request.user
+            and request.user.is_authenticated
+            and isinstance(request.user, Admin)
+        )
 
 
-class IsCitizenUser(BasePermission):
-    message = 'Citizen access required.'
+class IsRegularUser(BasePermission):
+    message = 'User access required.'
 
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and request.user.role == UserRole.CITIZEN)
+        from base.models import User
+        return bool(
+            request.user
+            and request.user.is_authenticated
+            and isinstance(request.user, User)
+        )

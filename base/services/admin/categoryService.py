@@ -13,8 +13,8 @@ def get_category(category_id: int) -> Category:
         raise NotFound('Category not found.')
 
 
-def create_category(validated_data: dict) -> Category:
-    return Category.objects.create(**validated_data)
+def create_category(admin_user, validated_data: dict) -> Category:
+    return Category.objects.create(created_by=admin_user, **validated_data)
 
 
 def update_category(category_id: int, validated_data: dict) -> Category:

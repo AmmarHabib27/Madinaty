@@ -1,19 +1,22 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from base.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 
 from base.serializers.admin import NewsSerializer, NewsCreateSerializer, NewsUpdateSerializer
 from base.services.admin import newsService, notificationService
+from base.pagination import StandardPagination
 
 
 class AdminNewsListCreateView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get(self, request):
         news_list = newsService.list_news()
-        serializer = NewsSerializer(news_list, many=True, context={'request': request})
-        return Response(serializer.data)
+        paginator = StandardPagination()
+        page = paginator.paginate_queryset(news_list, request)
+        serializer = NewsSerializer(page, many=True, context={'request': request})
+        return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
         serializer = NewsCreateSerializer(data=request.data)
@@ -24,7 +27,7 @@ class AdminNewsListCreateView(APIView):
 
 
 class AdminNewsDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get(self, request, pk):
         news = newsService.get_news(pk)

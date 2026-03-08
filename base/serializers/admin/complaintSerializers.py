@@ -11,13 +11,13 @@ class ComplaintMediaSerializer(serializers.ModelSerializer):
 class AdminComplaintListSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     user_name = serializers.CharField(source='user.name', read_only=True)
-    user_email = serializers.CharField(source='user.email', read_only=True)
+    user_phone = serializers.CharField(source='user.phone', read_only=True)
 
     class Meta:
         model = Complaint
         fields = [
             'id', 'title', 'description', 'category', 'category_name',
-            'user', 'user_name', 'user_email',
+            'user', 'user_name', 'user_phone',
             'status', 'priority', 'admin_comment',
             'latitude', 'longitude', 'location_address',
             'created_at', 'updated_at'

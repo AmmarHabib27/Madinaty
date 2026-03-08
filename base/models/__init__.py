@@ -1,11 +1,12 @@
-from .userModel import User, UserRole
+from .userModel import User
+from .adminModel import Admin
 from .categoryModel import Category
 from .complaintModel import Complaint, ComplaintMedia, ComplaintStatus, ComplaintPriority
 from .newsModel import News
 
 __all__ = [
     'User',
-    'UserRole',
+    'Admin',
     'Category',
     'Complaint',
     'ComplaintMedia',

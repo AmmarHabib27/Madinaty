@@ -1,5 +1,5 @@
 from django.urls import path
-from base.views.admin.authViews import AdminLoginView, AdminLogoutView, AdminChangePasswordView
+from base.views.admin.authViews import AdminLoginView, AdminTokenRefreshView, AdminLogoutView, AdminChangePasswordView
 from base.views.admin.profileViews import AdminProfileView, UserListView, ToggleUserActiveView
 from base.views.admin.complaintViews import AdminComplaintListView, AdminComplaintDetailView
 from base.views.admin.categoryViews import CategoryListCreateView, CategoryDetailView
@@ -8,11 +8,14 @@ from base.views.admin.newsViews import AdminNewsListCreateView, AdminNewsDetailV
 urlpatterns = [
     # Auth
     path('auth/login/', AdminLoginView.as_view(), name='admin-login'),
+    path('auth/token/refresh/', AdminTokenRefreshView.as_view(), name='admin-token-refresh'),
     path('auth/logout/', AdminLogoutView.as_view(), name='admin-logout'),
     path('auth/change-password/', AdminChangePasswordView.as_view(), name='admin-change-password'),
 
-    # Profile & Users
+    # Profile
     path('profile/', AdminProfileView.as_view(), name='admin-profile'),
+
+    #users
     path('users/', UserListView.as_view(), name='admin-user-list'),
     path('users/<int:pk>/toggle-active/', ToggleUserActiveView.as_view(), name='admin-toggle-user'),
 

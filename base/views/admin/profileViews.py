@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from base.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -9,10 +9,11 @@ from base.serializers.admin import (
     UserListSerializer,
 )
 from base.services.admin import profileService
+from base.pagination import StandardPagination
 
 
 class AdminProfileView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get(self, request):
         serializer = AdminProfileSerializer(request.user)
@@ -26,16 +27,18 @@ class AdminProfileView(APIView):
 
 
 class UserListView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get(self, request):
         users = profileService.list_users()
-        serializer = UserListSerializer(users, many=True)
-        return Response(serializer.data)
+        paginator = StandardPagination()
+        page = paginator.paginate_queryset(users, request)
+        serializer = UserListSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
 
 class ToggleUserActiveView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def post(self, request, pk):
         user = profileService.toggle_user_active(pk)

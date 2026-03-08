@@ -1,11 +1,10 @@
 from django.db import models
-from django.conf import settings
 from django.utils import timezone
 
 
 class News(models.Model):
-    admin = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+    created_by = models.ForeignKey(
+        'base.Admin',
         on_delete=models.SET_NULL,
         null=True,
         related_name='news_posts'
@@ -13,9 +12,8 @@ class News(models.Model):
     title = models.CharField(max_length=255)
     body = models.TextField()
     image = models.ImageField(upload_to='news_images/', null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-    duration_hours = models.PositiveIntegerField()
-    expiry_at = models.DateTimeField()
+    start_date = models.DateTimeField()
+    expiry_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -27,5 +25,6 @@ class News(models.Model):
         return self.title
 
     @property
-    def is_expired(self):
-        return timezone.now() > self.expiry_at
+    def is_active(self):
+        now = timezone.now()
+        return self.start_date <= now <= self.expiry_date

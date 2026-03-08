@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from base.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from base.serializers.admin import (
@@ -8,10 +8,11 @@ from base.serializers.admin import (
     UpdateComplaintStatusSerializer,
 )
 from base.services.admin import complaintService, notificationService
+from base.pagination import StandardPagination
 
 
 class AdminComplaintListView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get(self, request):
         filters = {
@@ -20,12 +21,14 @@ class AdminComplaintListView(APIView):
             'category_id': request.query_params.get('category_id'),
         }
         complaints = complaintService.list_complaints(filters)
-        serializer = AdminComplaintListSerializer(complaints, many=True, context={'request': request})
-        return Response(serializer.data)
+        paginator = StandardPagination()
+        page = paginator.paginate_queryset(complaints, request)
+        serializer = AdminComplaintListSerializer(page, many=True, context={'request': request})
+        return paginator.get_paginated_response(serializer.data)
 
 
 class AdminComplaintDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get(self, request, pk):
         complaint = complaintService.get_complaint(pk)

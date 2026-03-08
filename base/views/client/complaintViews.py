@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from base.permissions import IsRegularUser
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -9,15 +9,18 @@ from base.serializers.client import (
     ComplaintCreateSerializer,
 )
 from base.services.client import complaintService
+from base.pagination import StandardPagination
 
 
 class ComplaintListCreateView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsRegularUser]
 
     def get(self, request):
         complaints = complaintService.list_complaints(request.user)
-        serializer = ComplaintListSerializer(complaints, many=True, context={'request': request})
-        return Response(serializer.data)
+        paginator = StandardPagination()
+        page = paginator.paginate_queryset(complaints, request)
+        serializer = ComplaintListSerializer(page, many=True, context={'request': request})
+        return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
         serializer = ComplaintCreateSerializer(data=request.data, context={'request': request})
@@ -32,7 +35,7 @@ class ComplaintListCreateView(APIView):
 
 
 class ComplaintDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsRegularUser]
 
     def get(self, request, pk):
         complaint = complaintService.get_complaint(request.user, pk)

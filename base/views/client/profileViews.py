@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from base.permissions import IsRegularUser
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -8,7 +8,7 @@ from base.services.client import profileService
 
 
 class ProfileView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsRegularUser]
 
     def get(self, request):
         user = profileService.get_profile(request.user)
@@ -23,7 +23,7 @@ class ProfileView(APIView):
 
 
 class DeleteProfilePictureView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsRegularUser]
 
     def delete(self, request):
         profileService.delete_profile_picture(request.user)

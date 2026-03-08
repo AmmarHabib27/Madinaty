@@ -3,7 +3,7 @@ from django.contrib.auth.password_validation import validate_password
 
 
 class AdminLoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    phone = serializers.CharField(max_length=20)
     password = serializers.CharField(write_only=True)
 
 

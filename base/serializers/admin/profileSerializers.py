@@ -1,21 +1,21 @@
 from rest_framework import serializers
-from base.models import User
+from base.models import Admin, User
 
 
 class AdminProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'name', 'email', 'phone', 'profile_picture', 'role', 'created_at']
-        read_only_fields = ['id', 'email', 'role', 'created_at']
+        model = Admin
+        fields = ['id', 'name', 'phone', 'profile_picture', 'created_at']
+        read_only_fields = ['id', 'phone', 'created_at']
 
 
 class AdminUpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['name', 'phone', 'profile_picture']
+        model = Admin
+        fields = ['name', 'profile_picture']
 
 
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'name', 'email', 'phone', 'role', 'is_active', 'created_at']
+        fields = ['id', 'name', 'phone', 'is_active', 'created_at']
