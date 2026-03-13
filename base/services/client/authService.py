@@ -41,6 +41,17 @@ def _send_otp(user: User) -> None:
     _send_sms(user.phone, otp)
 
 
+def _send_otp_to_phone(phone: str) -> None:
+    """Lookup user by phone and send them an OTP."""
+    try:
+        user = User.objects.get(phone=phone)
+    except User.DoesNotExist:
+        raise NotFound('No account found with this phone number.')
+    if not user.is_active:
+        raise AuthenticationFailed('Account is disabled.')
+    _send_otp(user)
+
+
 def _get_tokens(user) -> dict:
     refresh = RefreshToken.for_user(user)
     return {
@@ -50,34 +61,41 @@ def _get_tokens(user) -> dict:
 
 
 def register_user(validated_data: dict) -> None:
-    """Create user account and send OTP to phone."""
-    user = User.objects.create_user(
+    """Create user account (unverified) and send OTP to phone."""
+    User.objects.create_user(
         phone=validated_data['phone'],
         name=validated_data['name'],
+        password=validated_data['password'],
     )
-    _send_otp(user)
+    _send_otp_to_phone(validated_data['phone'])
 
 
-def login_user(phone: str) -> None:
-    """Send OTP to phone for an existing user."""
+def login_user(phone: str, password: str) -> dict:
+    """Authenticate with phone + password and return JWT tokens."""
     try:
         user = User.objects.get(phone=phone)
     except User.DoesNotExist:
-        raise NotFound('No account found with this phone number.')
+        raise AuthenticationFailed('Invalid phone number or password.')
+
+    if not user.check_password(password):
+        raise AuthenticationFailed('Invalid phone number or password.')
 
     if not user.is_active:
         raise AuthenticationFailed('Account is disabled.')
 
-    _send_otp(user)
+    if not user.is_phone_verified:
+        raise AuthenticationFailed('Please verify your phone number first.')
+
+    return _get_tokens(user)
 
 
 def resend_otp(phone: str) -> None:
-    """Resend OTP to phone (for when the previous code expired)."""
-    login_user(phone)
+    """Resend OTP to phone (usable for registration verification and forget password)."""
+    _send_otp_to_phone(phone)
 
 
 def verify_otp_and_login(phone: str, otp_code: str) -> tuple:
-    """Verify OTP from cache, return (user, tokens) on success."""
+    """Verify OTP, mark phone as verified, and return (user, tokens)."""
     key = _otp_cache_key(phone)
     stored_otp = cache.get(key)
 
@@ -91,8 +109,35 @@ def verify_otp_and_login(phone: str, otp_code: str) -> tuple:
     except User.DoesNotExist:
         raise NotFound('User not found.')
 
-    tokens = _get_tokens(user)
-    return user, tokens
+    if not user.is_phone_verified:
+        user.is_phone_verified = True
+        user.save(update_fields=['is_phone_verified'])
+
+    return user, _get_tokens(user)
+
+
+def send_forget_password_otp(phone: str) -> None:
+    """Send OTP to phone for forget-password flow."""
+    _send_otp_to_phone(phone)
+
+
+def reset_password(phone: str, otp_code: str, new_password: str) -> None:
+    """Verify OTP and set a new password for the user."""
+    key = _otp_cache_key(phone)
+    stored_otp = cache.get(key)
+
+    if not stored_otp or stored_otp != otp_code:
+        raise ValidationError({'otp': 'Invalid or expired verification code.'})
+
+    cache.delete(key)
+
+    try:
+        user = User.objects.get(phone=phone)
+    except User.DoesNotExist:
+        raise NotFound('User not found.')
+
+    user.set_password(new_password)
+    user.save(update_fields=['password'])
 
 
 def get_user_by_id(user_id: int) -> User:

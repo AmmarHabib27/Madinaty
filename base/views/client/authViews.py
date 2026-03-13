@@ -12,6 +12,8 @@ from base.serializers.client import (
     LoginSerializer,
     ResendOTPSerializer,
     VerifyOTPSerializer,
+    ForgetPasswordSerializer,
+    ResetPasswordSerializer,
 )
 from base.services.client import authService
 from base.utils import api_response
@@ -33,8 +35,11 @@ class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        authService.login_user(serializer.validated_data['phone'])
-        return api_response('Verification code sent to your phone.')
+        tokens = authService.login_user(
+            serializer.validated_data['phone'],
+            serializer.validated_data['password'],
+        )
+        return api_response('Logged in successfully.', data=tokens)
 
 
 class ResendOTPView(APIView):
@@ -57,7 +62,31 @@ class VerifyOTPView(APIView):
             serializer.validated_data['phone'],
             serializer.validated_data['otp'],
         )
-        return api_response('Logged in successfully.', data=tokens)
+        return api_response('Phone verified. Logged in successfully.', data=tokens)
+
+
+class ForgetPasswordView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = ForgetPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        authService.send_forget_password_otp(serializer.validated_data['phone'])
+        return api_response('Verification code sent to your phone.')
+
+
+class ResetPasswordView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        authService.reset_password(
+            serializer.validated_data['phone'],
+            serializer.validated_data['otp'],
+            serializer.validated_data['new_password'],
+        )
+        return api_response('Password reset successfully.')
 
 
 class TokenRefreshView(APIView):

@@ -3,11 +3,11 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, phone, name, **extra_fields):
+    def create_user(self, phone, name, password, **extra_fields):
         if not phone:
             raise ValueError('Phone number is required')
         user = self.model(phone=phone, name=name, **extra_fields)
-        user.set_unusable_password()
+        user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -25,6 +25,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=20, unique=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     onesignal_player_id = models.CharField(max_length=255, blank=True)
+    is_phone_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
