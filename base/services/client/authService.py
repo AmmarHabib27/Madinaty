@@ -17,7 +17,7 @@ def _otp_cache_key(phone: str) -> str:
 def _generate_otp() -> str:
     if getattr(settings, 'ENVIRONMENT', 'production') == 'staging':
         return MOCK_OTP
-    return str(random.randint(100000, 999999))
+    return str(random.randint(10000, 99999))
 
 
 def _send_sms(phone: str, otp: str) -> None:

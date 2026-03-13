@@ -47,7 +47,7 @@ class ResendOTPSerializer(serializers.Serializer):
 
 class VerifyOTPSerializer(serializers.Serializer):
     phone = serializers.CharField(max_length=20)
-    otp = serializers.CharField(max_length=6, min_length=4)
+    otp = serializers.CharField(max_length=5, min_length=4)
 
 
 class ForgetPasswordSerializer(serializers.Serializer):
@@ -56,7 +56,7 @@ class ForgetPasswordSerializer(serializers.Serializer):
 
 class ForgetPasswordConfirmSerializer(serializers.Serializer):
     phone = serializers.CharField(max_length=20)
-    otp = serializers.CharField(max_length=6, min_length=4)
+    otp = serializers.CharField(max_length=5, min_length=4)
     new_password = serializers.CharField()
 
     def validate_new_password(self, value):

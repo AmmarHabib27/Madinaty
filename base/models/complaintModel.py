@@ -40,6 +40,7 @@ class Complaint(models.Model):
         choices=ComplaintPriority.choices,
         default=ComplaintPriority.LOW
     )
+    date = models.DateField(null=True, blank=True)
     admin_comment = models.TextField(blank=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
