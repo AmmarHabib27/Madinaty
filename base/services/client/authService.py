@@ -121,8 +121,8 @@ def send_forget_password_otp(phone: str) -> None:
     _send_otp_to_phone(phone)
 
 
-def reset_password(phone: str, otp_code: str, new_password: str) -> None:
-    """Verify OTP and set a new password for the user."""
+def forget_password_confirm(phone: str, otp_code: str, new_password: str) -> None:
+    """Verify OTP from forget-password flow and set a new password."""
     key = _otp_cache_key(phone)
     stored_otp = cache.get(key)
 
@@ -136,6 +136,14 @@ def reset_password(phone: str, otp_code: str, new_password: str) -> None:
     except User.DoesNotExist:
         raise NotFound('User not found.')
 
+    user.set_password(new_password)
+    user.save(update_fields=['password'])
+
+
+def reset_password(user: User, old_password: str, new_password: str) -> None:
+    """Change password for an authenticated user using their old password."""
+    if not user.check_password(old_password):
+        raise ValidationError({'old_password': 'Current password is incorrect.'})
     user.set_password(new_password)
     user.save(update_fields=['password'])
 

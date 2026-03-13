@@ -1,6 +1,7 @@
 from .authSerializers import (
     LoginSerializer, ResendOTPSerializer, VerifyOTPSerializer,
-    RegisterSerializer, ForgetPasswordSerializer, ResetPasswordSerializer,
+    RegisterSerializer, ForgetPasswordSerializer, ForgetPasswordConfirmSerializer,
+    ResetPasswordSerializer,
 )
 from .profileSerializers import ProfileSerializer, UpdateProfileSerializer
 from .complaintSerializers import (

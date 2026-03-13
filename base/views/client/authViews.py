@@ -13,6 +13,7 @@ from base.serializers.client import (
     ResendOTPSerializer,
     VerifyOTPSerializer,
     ForgetPasswordSerializer,
+    ForgetPasswordConfirmSerializer,
     ResetPasswordSerializer,
 )
 from base.services.client import authService
@@ -75,18 +76,32 @@ class ForgetPasswordView(APIView):
         return api_response('Verification code sent to your phone.')
 
 
-class ResetPasswordView(APIView):
+class ForgetPasswordConfirmView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        serializer = ResetPasswordSerializer(data=request.data)
+        serializer = ForgetPasswordConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        authService.reset_password(
+        authService.forget_password_confirm(
             serializer.validated_data['phone'],
             serializer.validated_data['otp'],
             serializer.validated_data['new_password'],
         )
         return api_response('Password reset successfully.')
+
+
+class ResetPasswordView(APIView):
+    permission_classes = [IsRegularUser]
+
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        authService.reset_password(
+            request.user,
+            serializer.validated_data['old_password'],
+            serializer.validated_data['new_password'],
+        )
+        return api_response('Password changed successfully.')
 
 
 class TokenRefreshView(APIView):
