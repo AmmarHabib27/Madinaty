@@ -1,7 +1,10 @@
+import os
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
 from decouple import config, Csv
+from django.utils.translation import gettext_lazy as _
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
