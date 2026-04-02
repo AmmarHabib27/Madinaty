@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url
 from decouple import config, Csv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -58,21 +59,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-_db_engine = config('DB_ENGINE', default='django.db.backends.sqlite3')
-_db_name = config('DB_NAME', default='')
-if not _db_name:
-    _db_name = str(BASE_DIR / 'db.sqlite3')
+# #Local enviroment
+# _db_engine = config('DB_ENGINE', default='django.db.backends.sqlite3')
+# _db_name = config('DB_NAME', default='')
+# if not _db_name:
+#     _db_name = str(BASE_DIR / 'db.sqlite3')
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': _db_engine,
+#         'NAME': _db_name,
+#         'USER': config('DB_USER', default=''),
+#         'PASSWORD': config('DB_PASSWORD', default=''),
+#         'HOST': config('DB_HOST', default=''),
+#         'PORT': config('DB_PORT', default=''),
+#     }
+# }
+
+
 
 DATABASES = {
-    'default': {
-        'ENGINE': _db_engine,
-        'NAME': _db_name,
-        'USER': config('DB_USER', default=''),
-        'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default=''),
-        'PORT': config('DB_PORT', default=''),
-    }
+    'default': dj_database_url.config(conn_max_age=600)
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -86,9 +95,11 @@ TIME_ZONE = config('TIME_ZONE', default='Africa/Cairo')
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_URL = '/static/'
+MEDIA_URL = "/media/"
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
