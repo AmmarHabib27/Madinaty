@@ -33,7 +33,7 @@ class ComplaintListCreateView(APIView):
             or list(request.FILES.values())
         )
         # Remove serializer-only key before creating Complaint model
-        validated_data.pop('media_files', None)
+        validated_data.pop('media_files', None) 
         validated_data['media'] = media_files
         complaint = complaintService.create_complaint(request.user, validated_data)
         return Response(
