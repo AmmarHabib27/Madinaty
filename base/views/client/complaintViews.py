@@ -25,8 +25,16 @@ class ComplaintListCreateView(APIView):
     def post(self, request):
         serializer = ComplaintCreateSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        validated_data = serializer.validated_data
-        validated_data['media'] = request.FILES.getlist('media_files')
+        validated_data = dict(serializer.validated_data)
+        # Accept both 'media_files' and 'media_files[]' (some clients send bracketed keys)
+        media_files = (
+            request.FILES.getlist('media_files')
+            or request.FILES.getlist('media_files[]')
+            or list(request.FILES.values())
+        )
+        # Remove serializer-only key before creating Complaint model
+        validated_data.pop('media_files', None)
+        validated_data['media'] = media_files
         complaint = complaintService.create_complaint(request.user, validated_data)
         return Response(
             ComplaintDetailSerializer(complaint, context={'request': request}).data,
