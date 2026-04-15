@@ -7,7 +7,7 @@ from base.models import User
 
 OTP_TTL = 600  # 10 minutes
 OTP_KEY_PREFIX = 'otp'
-MOCK_OTP = '1234'
+MOCK_OTP = '123456'
 
 
 def _otp_cache_key(phone: str) -> str:
