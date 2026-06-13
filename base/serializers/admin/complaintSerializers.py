@@ -31,6 +31,12 @@ class AdminComplaintDetailSerializer(AdminComplaintListSerializer):
         fields = AdminComplaintListSerializer.Meta.fields + ['media']
 
 
+class AdminComplaintMapSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Complaint
+        fields = ['id', 'latitude', 'longitude', 'location_address', 'priority']
+
+
 class UpdateComplaintStatusSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=ComplaintStatus.choices)
     admin_comment = serializers.CharField(required=False, allow_blank=True)

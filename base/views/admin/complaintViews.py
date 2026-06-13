@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from base.serializers.admin import (
     AdminComplaintListSerializer,
     AdminComplaintDetailSerializer,
+    AdminComplaintMapSerializer,
     UpdateComplaintStatusSerializer,
 )
 from base.services.admin import complaintService, notificationService
@@ -25,6 +26,24 @@ class AdminComplaintListView(APIView):
         page = paginator.paginate_queryset(complaints, request)
         serializer = AdminComplaintListSerializer(page, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
+
+
+class AdminComplaintMapListView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        filters = {
+            'status': request.query_params.get('status'),
+            'priority': request.query_params.get('priority'),
+            'category_id': request.query_params.get('category_id'),
+        }
+        complaints = complaintService.list_all_complaints(filters)
+        serializer = AdminComplaintMapSerializer(complaints, many=True)
+        return Response({
+            'code': 200,
+            'message': '',
+            'data': serializer.data,
+        })
 
 
 class AdminComplaintDetailView(APIView):

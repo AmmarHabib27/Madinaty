@@ -1,7 +1,7 @@
 from django.urls import path
 from base.views.admin.authViews import AdminLoginView, AdminTokenRefreshView, AdminLogoutView, AdminChangePasswordView
 from base.views.admin.profileViews import AdminProfileView, UserListView, ToggleUserActiveView
-from base.views.admin.complaintViews import AdminComplaintListView, AdminComplaintDetailView
+from base.views.admin.complaintViews import AdminComplaintListView, AdminComplaintDetailView, AdminComplaintMapListView
 from base.views.admin.categoryViews import CategoryListCreateView, CategoryDetailView
 from base.views.admin.newsViews import AdminNewsListCreateView, AdminNewsDetailView
 
@@ -21,6 +21,7 @@ urlpatterns = [
 
     # Complaints
     path('complaints/', AdminComplaintListView.as_view(), name='admin-complaints'),
+    path('complaints/map/', AdminComplaintMapListView.as_view(), name='admin-complaint-map'),
     path('complaints/<int:pk>/', AdminComplaintDetailView.as_view(), name='admin-complaint-detail'),
 
     # Categories
