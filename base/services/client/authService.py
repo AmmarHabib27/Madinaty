@@ -3,6 +3,7 @@ from django.core.cache import cache
 from django.conf import settings
 from rest_framework.exceptions import AuthenticationFailed, ValidationError, NotFound
 from rest_framework_simplejwt.tokens import RefreshToken
+from twilio.rest import Client as TwilioClient
 from base.models import User
 
 OTP_TTL = 600  # 10 minutes
@@ -21,18 +22,16 @@ def _generate_otp() -> str:
 
 
 def _send_sms(phone: str, otp: str) -> None:
-    """Send OTP via SMS. In staging the OTP is always mocked — no SMS needed.
-    In production, plug in your SMS gateway here (e.g. Twilio, Vonage)."""
     if getattr(settings, 'ENVIRONMENT', 'production') == 'staging':
         return
     if not phone:
         return
-    # TODO: integrate SMS provider
-    # Example (Twilio):
-    # from twilio.rest import Client
-    # Client(settings.TWILIO_SID, settings.TWILIO_TOKEN).messages.create(
-    #     to=phone, from_=settings.TWILIO_FROM, body=f'Your Madinaty code: {otp}'
-    # )
+    client = TwilioClient(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    client.messages.create(
+        to=phone,
+        from_=settings.TWILIO_PHONE_NUMBER,
+        body=f'Your Madinaty verification code: {otp}',
+    )
 
 
 def _send_otp(user: User) -> None:
