@@ -155,6 +155,6 @@ def get_user_by_id(user_id: int) -> User:
         raise NotFound('User not found.')
 
 
-def update_onesignal_player_id(user, player_id: str) -> None:
-    user.onesignal_player_id = player_id
-    user.save(update_fields=['onesignal_player_id'])
+def update_fcm_token(user, fcm_token: str) -> None:
+    user.fcm_token = fcm_token
+    user.save(update_fields=['fcm_token'])

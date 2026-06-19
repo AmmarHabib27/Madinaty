@@ -9,7 +9,7 @@ from base.views.client.authViews import (
     ResetPasswordView,
     TokenRefreshView,
     LogoutView,
-    UpdateOneSignalPlayerIdView,
+    UpdateFCMTokenView,
 )
 from base.views.client.profileViews import ProfileView, DeleteProfilePictureView
 from base.views.client.complaintViews import ComplaintListCreateView, ComplaintDetailView
@@ -27,7 +27,7 @@ urlpatterns = [
     path('auth/reset-password/', ResetPasswordView.as_view(), name='client-reset-password'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='client-token-refresh'),
     path('auth/logout/', LogoutView.as_view(), name='client-logout'),
-    path('auth/update-player-id/', UpdateOneSignalPlayerIdView.as_view(), name='client-player-id'),
+    path('auth/update-player-id/', UpdateFCMTokenView.as_view(), name='client-player-id'),
 
     # Profile
     path('profile/', ProfileView.as_view(), name='client-profile'),

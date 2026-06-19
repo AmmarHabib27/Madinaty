@@ -147,9 +147,8 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@madinaty.com')
 
-# OneSignal
-ONESIGNAL_APP_ID = config('ONESIGNAL_APP_ID', default='')
-ONESIGNAL_REST_API_KEY = config('ONESIGNAL_REST_API_KEY', default='')
+# Firebase Cloud Messaging
+FCM_SERVICE_ACCOUNT_JSON = config('FCM_SERVICE_ACCOUNT_JSON', default='')
 
 # Media file size limit: 20MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 20 * 1024 * 1024

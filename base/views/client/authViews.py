@@ -1,5 +1,3 @@
-import uuid
-
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -142,16 +140,12 @@ class LogoutView(APIView):
         return api_response('Logged out successfully.')
 
 
-class UpdateOneSignalPlayerIdView(APIView):
+class UpdateFCMTokenView(APIView):
     permission_classes = [IsRegularUser]
 
     def post(self, request):
-        player_id = request.data.get('player_id', '').strip()
-        if not player_id:
-            raise ValidationError({'player_id': 'This field is required.'})
-        try:
-            uuid.UUID(player_id)
-        except ValueError:
-            raise ValidationError({'player_id': 'Must be a valid UUID.'})
-        authService.update_onesignal_player_id(request.user, player_id)
-        return api_response('Player ID updated.')
+        fcm_token = request.data.get('fcm_token', '').strip()
+        if not fcm_token:
+            raise ValidationError({'fcm_token': 'This field is required.'})
+        authService.update_fcm_token(request.user, fcm_token)
+        return api_response('FCM token updated.')
