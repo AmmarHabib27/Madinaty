@@ -5,6 +5,7 @@ from rest_framework.exceptions import AuthenticationFailed, ValidationError, Not
 from rest_framework_simplejwt.tokens import RefreshToken
 from twilio.rest import Client as TwilioClient
 from base.models import User
+from base.common.phone import normalize_phone
 
 OTP_TTL = 600  # 10 minutes
 OTP_KEY_PREFIX = 'otp'
@@ -28,7 +29,7 @@ def _send_sms(phone: str, otp: str) -> None:
         return
     client = TwilioClient(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
     client.messages.create(
-        to=phone,
+        to=normalize_phone(phone),
         from_=settings.TWILIO_PHONE_NUMBER,
         body=f'Your Madinaty verification code: {otp}',
     )
