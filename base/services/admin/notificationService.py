@@ -40,7 +40,7 @@ def send_to_user(fcm_token: str, title: str, message: str, data: dict = None) ->
 
 def notify_news_published(title: str, body: str) -> None:
     send_to_all(
-        title='New Announcement',
+        title='خبر جديد يهمك',
         message=title,
         data={'type': 'news'},
     )
@@ -52,7 +52,7 @@ def notify_complaint_status_changed(complaint) -> None:
         return
     send_to_user(
         fcm_token=fcm_token,
-        title='Complaint Update',
-        message=f'Your complaint "{complaint.title}" status changed to: {complaint.get_status_display()}.',
+        title='إشعار بشأن البلاغ المقدم منكم',
+        message='نود إفادتكم بأنه قد تم تحديث حالة البلاغ الخاص بكم من قِبل الإدارة المختصة. يرجى الاطلاع على قائمة البلاغات لمتابعة الإجراءات.',
         data={'complaint_id': complaint.id, 'status': complaint.status},
     )
