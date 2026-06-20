@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from base.models import Complaint, ComplaintMedia, ComplaintStatus
+from base.models import Complaint, ComplaintMedia, ComplaintStatus, ComplaintPriority
 
 
 class ComplaintMediaSerializer(serializers.ModelSerializer):
@@ -39,6 +39,7 @@ class AdminComplaintMapSerializer(serializers.ModelSerializer):
 
 class UpdateComplaintStatusSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=ComplaintStatus.choices)
+    priority = serializers.ChoiceField(choices=ComplaintPriority.choices, required=False)
     admin_comment = serializers.CharField(required=False, allow_blank=True)
 
     def validate(self, attrs):
