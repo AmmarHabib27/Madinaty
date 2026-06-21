@@ -18,7 +18,7 @@ class ComplaintCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Complaint
         fields = [
-            'title', 'description', 'category', 'date',
+            'title', 'description', 'category', 'priority', 'date',
             'latitude', 'longitude', 'location_address', 'media_files'
         ]
 
